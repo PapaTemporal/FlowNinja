@@ -29,6 +29,7 @@
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.27.4",
 		"@sveltejs/package": "^2.0.0",
+		"@types/d3": "^7.4.3",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
 		"eslint": "^8.28.0",
@@ -42,5 +43,12 @@
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@types/d3-selection": "^3.0.10",
+		"@types/d3-zoom": "^3.0.8",
+		"d3-selection": "^3.0.0",
+		"d3-zoom": "^3.0.0",
+		"uuid": "^9.0.1"
+	}
 }
