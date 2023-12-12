@@ -85,7 +85,7 @@
         max: [number, number];
     };
 
-    export let scale = 0.9;
+    export let scale = 1;
     export let scaleExtents = {
         min: 0.5,
         max: 1.5,
@@ -104,108 +104,19 @@
         dragging = false;
     }
 
-    // function handleMouseMove(event: { clientX: number; clientY: number }) {
-    //     if (dragging) {
-    //         let newTranslateX = translateX + (event.clientX - lastX) / scale;
-    //         let newTranslateY = translateY + (event.clientY - lastY) / scale;
-
-    //         // Calculate the effect of scaling
-    //         let scaleEffectX = 0;
-    //         let scaleEffectY = 0;
-
-    //         if (scale < 1) {
-    //             scaleEffectX = ((1 - scale) * pWidth) / 2;
-    //             scaleEffectY = ((1 - scale) * pHeight) / 2;
-    //         } else if (scale > 1) {
-    //             scaleEffectX = ((scale - 1) * pWidth) / 2;
-    //             scaleEffectY = ((scale - 1) * pHeight) / 2;
-    //         }
-
-    //         // Adjust the translation to keep the center of the panner at the same position in the window
-    //         newTranslateX += (width / 2 - pWidth / 2) * (1 - scale);
-    //         newTranslateY += (height / 2 - pHeight / 2) * (1 - scale);
-
-    //         // Clamp translation to the size of the panner minus the size of the viewport
-    //         newTranslateX = Math.max(
-    //             Math.min(newTranslateX, scaleEffectX),
-    //             -scaleEffectX,
-    //         );
-    //         newTranslateY = Math.max(
-    //             Math.min(newTranslateY, scaleEffectY),
-    //             -scaleEffectY,
-    //         );
-
-    //         translateX = newTranslateX;
-    //         translateY = newTranslateY;
-
-    //         lastX = event.clientX;
-    //         lastY = event.clientY;
-    //     }
-    // }
-
-    // function handleMouseMove(event: { clientX: number; clientY: number }) {
-    //     if (dragging) {
-    //         let newTranslateX = translateX + (event.clientX - lastX) / scale;
-    //         let newTranslateY = translateY + (event.clientY - lastY) / scale;
-
-    //         // Calculate the effect of scaling
-    //         let scaleEffectX = ((scale - 1) * pWidth) / 2;
-    //         let scaleEffectY = ((scale - 1) * pHeight) / 2;
-
-    //         // Clamp translation to the size of the panner minus the size of the viewport
-    //         newTranslateX = Math.max(
-    //             Math.min(newTranslateX, scaleEffectX),
-    //             -scaleEffectX,
-    //         );
-    //         newTranslateY = Math.max(
-    //             Math.min(newTranslateY, scaleEffectY),
-    //             -scaleEffectY,
-    //         );
-
-    //         translateX = newTranslateX;
-    //         translateY = newTranslateY;
-
-    //         lastX = event.clientX;
-    //         lastY = event.clientY;
-    //     }
-    // }
-
-    // function handleMouseMove(event: { clientX: number; clientY: number }) {
-    //     if (dragging) {
-    //         let newTranslateX = translateX + (event.clientX - lastX) / scale;
-    //         let newTranslateY = translateY + (event.clientY - lastY) / scale;
-
-    //         // Clamp translation to the size of the panner minus the size of the viewport
-    //         newTranslateX = Math.max(
-    //             Math.min(newTranslateX, width / 2 - pWidth / scale),
-    //             -width / 2 + pWidth / 2 / scale, // Adjusted for top/left extent
-    //         );
-    //         newTranslateY = Math.max(
-    //             Math.min(newTranslateY, height / 2 - pHeight / scale),
-    //             -height / 2 + pHeight / 2 / scale, // Adjusted for top/left extent
-    //         );
-
-    //         translateX = newTranslateX;
-    //         translateY = newTranslateY;
-
-    //         lastX = event.clientX;
-    //         lastY = event.clientY;
-    //     }
-    // }
-
     function handleMouseMove(event: { clientX: number; clientY: number }) {
         if (dragging) {
             let newTranslateX = translateX + (event.clientX - lastX) / scale;
             let newTranslateY = translateY + (event.clientY - lastY) / scale;
 
-            // Clamp translation to the size of the panner minus the size of the viewport
+            // Clamp translation to the translateExtents
             newTranslateX = Math.max(
-                Math.min(newTranslateX, width / 2 - pWidth / scale),
-                -width / 2 + pWidth / scale,
+                Math.min(newTranslateX, translateExtents.max[0]),
+                translateExtents.min[0],
             );
             newTranslateY = Math.max(
-                Math.min(newTranslateY, height / 2 - pHeight / scale),
-                -height / 2 + pHeight / scale,
+                Math.min(newTranslateY, translateExtents.max[1]),
+                translateExtents.min[1],
             );
 
             translateX = newTranslateX;
@@ -226,6 +137,11 @@
 
         if (!translateX) translateX = -width / 2 + pWidth / 2 / scale;
         if (!translateY) translateY = -height / 2 + pHeight / 2 / scale;
+
+        translateExtents = {
+            min: [-width + pWidth, -height + pHeight],
+            max: [0, 0],
+        };
     });
 
     function wheel(node: HTMLElement) {
@@ -243,15 +159,21 @@
                 ),
             );
 
-            let mouseX = event.clientX;
-            let mouseY = event.clientY;
+            // Calculate the new translate extents
+            translateExtents = {
+                min: [-width + pWidth / scale, -height + pHeight / scale],
+                max: [0, 0],
+            };
 
-            // scaling doesn't change the position or size of the element,
-            // it only renders it bigger or smaller. So we need to track
-            // the offset of the top left corner from the actual size and
-            // position of the element so we can calculate the extents properly.
-            offsetX = translateX + (mouseX - mouseX * scale);
-            offsetY = translateY + (mouseY - mouseY * scale);
+            translateX = Math.max(
+                Math.min(translateX, translateExtents.max[0]),
+                translateExtents.min[0],
+            );
+
+            translateY = Math.max(
+                Math.min(translateY, translateExtents.max[1]),
+                translateExtents.min[1],
+            );
         }
 
         node.addEventListener("wheel", handleWheel, { passive: false });
@@ -273,7 +195,7 @@
         on:mousedown={handleMouseDown}
         on:mouseup={handleMouseUp}
         on:mousemove={handleMouseMove}
-        style="transform: scale({scale}) translate({translateX}px, {translateY}px); width: {width}px; height: {height}px;"
+        style="transform: scale({scale}) translate({translateX}px, {translateY}px); width: {width}px; height: {height}px; transform-origin: top left;"
     />
 </div>
 
