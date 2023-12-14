@@ -1,17 +1,30 @@
-import type { Writable } from "svelte/store";
+import type { Writable } from 'svelte/store';
 
-export function pan(node: HTMLElement, { x: startingX, y: startingY, height, width, scale }: { x: number, y: number, height: number, width: number, scale: Writable<number> }) {
-    let x = startingX;
-    let y = startingY;
+export function pan(
+    node: HTMLElement,
+    {
+        id,
+        transform,
+        scale,
+        updatePosition,
+    }: {
+        id: string;
+        transform: { x: number; y: number; height: number; width: number };
+        scale: Writable<number>;
+        updatePosition: (id: string, x: number, y: number) => void;
+    }
+) {
+    let x = transform.x;
+    let y = transform.y;
     let lastX = 0;
     let lastY = 0;
     let isPanning = false;
     node.style.transform = `translate(${x}px, ${y}px)`;
-    node.style.height = `${height}px`;
-    node.style.width = `${width}px`;
+    node.style.height = `${transform.height}px`;
+    node.style.width = `${transform.width}px`;
     let localScale: number;
 
-    const unsubscribe = scale.subscribe((value) => {
+    const unsubscribe = scale.subscribe(value => {
         localScale = value;
     });
 
@@ -37,6 +50,7 @@ export function pan(node: HTMLElement, { x: startingX, y: startingY, height, wid
             lastY = event.clientY;
 
             node.style.transform = `translate(${x}px, ${y}px)`;
+            updatePosition(id, x, y);
         }
     }
 
@@ -57,6 +71,6 @@ export function pan(node: HTMLElement, { x: startingX, y: startingY, height, wid
             node.removeEventListener('mousedown', handleMousedown);
             document.removeEventListener('mousemove', handleMousemove);
             document.removeEventListener('mouseup', handleMouseup);
-        }
+        },
     };
 }

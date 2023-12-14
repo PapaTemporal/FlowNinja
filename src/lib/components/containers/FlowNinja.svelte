@@ -1,16 +1,13 @@
 <script lang="ts">
-    import { onMount, setContext } from "svelte";
-    import type { StoreType } from "$lib/types";
-    import { nodeTypes } from "../nodes";
+    import { onMount, setContext } from 'svelte';
+    import type { StoreType } from '$lib/types';
+    import NodeRenderer from './NodeRenderer.svelte';
+    import EdgeRenderer from './EdgeRenderer.svelte';
 
     export let key: string;
     export let store: StoreType;
 
     const { viewportStore, nodesStore, edgesStore } = store;
-
-    setContext("key", key);
-    setContext("nodesStore", nodesStore);
-    setContext("edgesStore", edgesStore);
 
     let {
         x: translateX,
@@ -22,6 +19,11 @@
     } = viewportStore;
     let nodes = $nodesStore;
     let edges = $edgesStore;
+
+    setContext('key', key);
+    setContext('nodesStore', nodesStore);
+    setContext('edgesStore', edgesStore);
+    setContext('scale', scale);
 
     let viewportElement: HTMLElement;
     let pWidth: number;
@@ -51,11 +53,11 @@
             // Clamp translation to the translateExtents
             newTranslateX = Math.max(
                 Math.min(newTranslateX, translateExtents.max[0]),
-                translateExtents.min[0],
+                translateExtents.min[0]
             );
             newTranslateY = Math.max(
                 Math.min(newTranslateY, translateExtents.max[1]),
-                translateExtents.min[1],
+                translateExtents.min[1]
             );
 
             translateX.set(newTranslateX);
@@ -95,9 +97,9 @@
                     $scaleExtents[0],
                     Math.min(
                         $scaleExtents[1],
-                        $scale * (event.deltaY > 0 ? 1.1 : 0.9),
-                    ),
-                ),
+                        $scale * (event.deltaY > 0 ? 1.1 : 0.9)
+                    )
+                )
             );
 
             // Calculate the new translate extents
@@ -109,23 +111,23 @@
             translateX.set(
                 Math.max(
                     Math.min($translateX, translateExtents.max[0]),
-                    translateExtents.min[0],
-                ),
+                    translateExtents.min[0]
+                )
             );
 
             translateY.set(
                 Math.max(
                     Math.min($translateY, translateExtents.max[1]),
-                    translateExtents.min[1],
-                ),
+                    translateExtents.min[1]
+                )
             );
         }
 
-        node.addEventListener("wheel", handleWheel, { passive: false });
+        node.addEventListener('wheel', handleWheel, { passive: false });
 
         return {
             destroy() {
-                node.removeEventListener("wheel", handleWheel);
+                node.removeEventListener('wheel', handleWheel);
             },
         };
     }
@@ -142,13 +144,8 @@
         on:mousemove={handleMouseMove}
         style="transform: scale({$scale}) translate({$translateX}px, {$translateY}px); width: {$width}px; height: {$height}px; transform-origin: top left;"
     >
-        {#each nodes as node}
-            {#if nodeTypes[node.type]}
-                <svelte:component this={nodeTypes[node.type]} {node} {scale} />
-            {:else}
-                <svelte:component this={nodeTypes.default} {node} {scale} />
-            {/if}
-        {/each}
+        <NodeRenderer />
+        <EdgeRenderer />
     </div>
 </div>
 

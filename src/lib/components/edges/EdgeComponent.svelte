@@ -1,19 +1,19 @@
 <script lang="ts">
-    import { getContext } from "svelte";
-    import type { Writable } from "svelte/store";
-    import { edgeTypes } from "../edges";
-    import type { EdgeType, NodeType } from "$lib/types";
+    import { getContext } from 'svelte';
+    import type { Writable } from 'svelte/store';
+    import { edgeTypes } from '../edges';
+    import type { EdgeType, NodeType } from '$lib/types';
 
     export let edge: EdgeType;
     export let scale: Writable<number>;
 
-    const nodesStore: Writable<NodeType[]> = getContext("nodesStore");
+    const nodesStore: Writable<NodeType[]> = getContext('nodesStore');
 
     let sourceNode: NodeType, targetNode: NodeType;
 
     $: {
-        sourceNode = $nodesStore.find((node) => node.id === edge.source);
-        targetNode = $nodesStore.find((node) => node.id === edge.target);
+        sourceNode = $nodesStore.find(node => node.id === edge.source);
+        targetNode = $nodesStore.find(node => node.id === edge.target);
     }
 </script>
 

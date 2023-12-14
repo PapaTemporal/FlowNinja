@@ -1,18 +1,35 @@
 <script lang="ts">
-    import { pan } from "../../actions";
-    export let node: any;
+    import { Dot } from '$lib/components/ports';
+    import { Direction } from '$lib/types';
+
+    export let id: string;
+    export let type: string;
+    export let transform: {
+        x: number;
+        y: number;
+        height: number;
+        width: number;
+    };
+    export let data: any;
+    export let updateData: (id: string, data: any) => void;
 </script>
 
-<div id={node.id} class="node" use:pan={{ ...node, scale: $$props.scale }}>
-    I am a default node
+<div class="node row">
+    <Dot id={`${id}__a`} type="target" direction={Direction.Left} />
+    I am default node {id}
+    <Dot id={`${id}__b`} />
 </div>
 
 <style>
     .node {
-        position: absolute;
         background-color: #fff;
         border: 1px solid #000;
         border-radius: 5px;
         padding: 10px;
+    }
+    .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 </style>

@@ -1,7 +1,10 @@
-import type { CurrentEdgeType } from "$lib/types/components.js";
-import type { Writable } from "svelte/store";
+import type { CurrentEdgeType } from '$lib/types/components.js';
+import type { Writable } from 'svelte/store';
 
-export function port(node: HTMLElement, { currentEdge }: { currentEdge: Writable<CurrentEdgeType | null> }) {
+export function port(
+    node: HTMLElement,
+    { currentEdge }: { currentEdge: Writable<CurrentEdgeType | null> }
+) {
     const { x, y } = node.getBoundingClientRect();
     const id = node.id;
     const pId = node.parentElement?.id;
@@ -50,6 +53,6 @@ export function port(node: HTMLElement, { currentEdge }: { currentEdge: Writable
         destroy() {
             // Remove the mousedown event listener from the node
             node.removeEventListener('mousedown', handleMousedown);
-        }
+        },
     };
 }

@@ -1,8 +1,8 @@
 export enum Direction {
-    Top = "top",
-    Right = "right",
-    Bottom = "bottom",
-    Left = "left",
+    Top = 'top',
+    Right = 'right',
+    Bottom = 'bottom',
+    Left = 'left',
 }
 
 export type Position = {

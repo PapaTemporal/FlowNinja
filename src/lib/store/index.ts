@@ -1,7 +1,14 @@
-import { writable, type Writable, derived } from "svelte/store";
+import { writable, type Writable, derived } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
-import type { SettingsType, ViewportType, NodeType, EdgeType, UserStoreType, StoreType, } from "./types";
-import type { CurrentEdgeType } from "$lib/types/components.js";
+import type {
+    SettingsType,
+    ViewportType,
+    NodeType,
+    EdgeType,
+    UserStoreType,
+    StoreType,
+} from './types';
+import type { CurrentEdgeType } from '$lib/types/components.js';
 
 let stores: { [key: string]: StoreType } = {};
 
@@ -18,11 +25,18 @@ const viewportDefaults: ViewportType = {
     scaleExtents: [0.5, 1.5],
 };
 
-export const createStore = ({ settings, viewport, nodes, edges }: UserStoreType) => {
+export const createStore = ({
+    settings,
+    viewport,
+    nodes,
+    edges,
+}: UserStoreType) => {
     const key = uuidv4();
 
     // Global settings store (public)
-    const settingsStore: SettingsType = { theme: writable(settings?.theme ?? settingsDefaults.theme) };
+    const settingsStore: SettingsType = {
+        theme: writable(settings?.theme ?? settingsDefaults.theme),
+    };
 
     // Viewport store (public)
     const viewportStore: ViewportType = {
@@ -31,7 +45,9 @@ export const createStore = ({ settings, viewport, nodes, edges }: UserStoreType)
         width: writable(viewport?.width ?? viewportDefaults.width),
         height: writable(viewport?.height ?? viewportDefaults.height),
         scale: writable(viewport?.scale ?? viewportDefaults.scale),
-        scaleExtents: writable(viewport?.scaleExtents ?? viewportDefaults.scaleExtents),
+        scaleExtents: writable(
+            viewport?.scaleExtents ?? viewportDefaults.scaleExtents
+        ),
     };
 
     // Flow store (array of nodes and edges - public)
@@ -63,4 +79,4 @@ export const createStore = ({ settings, viewport, nodes, edges }: UserStoreType)
     };
 
     return { key, store: stores[key] };
-}
+};

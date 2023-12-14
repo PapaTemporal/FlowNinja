@@ -1,8 +1,11 @@
-import type { NodeType } from "$lib/types";
-import type { EdgeType } from "$lib/types/store.js";
-import { getNodeCenterPosition } from "./nodes";
+import type { NodeType } from '$lib/types';
+import type { EdgeType } from '$lib/types/store.js';
+import { getNodeCenterPosition } from './nodes';
 
-export function getEdgeSourceAndTargetNodePositions(edge: EdgeType, nodes: NodeType[]) {
+export function getEdgeSourceAndTargetNodePositions(
+    edge: EdgeType,
+    nodes: NodeType[]
+) {
     const sourceNode = getNodeCenterPosition(edge.source, nodes);
     const targetNode = getNodeCenterPosition(edge.target, nodes);
     return {

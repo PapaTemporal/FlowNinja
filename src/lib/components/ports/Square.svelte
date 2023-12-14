@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { v4 as uuidv4 } from "uuid";
-    import { Direction } from "$lib/types";
+    import { v4 as uuidv4 } from 'uuid';
+    import { Direction } from '$lib/types';
 
     export let id = uuidv4();
-    export let type = "source";
+    export let type = 'source';
     export let direction = Direction.Right;
 </script>
 

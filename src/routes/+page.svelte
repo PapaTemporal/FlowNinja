@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { FlowNinja, createStore } from "$lib";
+    import { FlowNinja, createStore } from '$lib';
 
     let nodes = [
         {
-            id: "1",
-            type: "default",
+            id: '1',
+            type: 'default',
             transform: {
                 x: 100,
                 y: 100,
@@ -12,12 +12,12 @@
                 width: 100,
             },
             data: {
-                label: "Node 1",
+                label: 'Node 1',
             },
         },
         {
-            id: "2",
-            type: "default",
+            id: '2',
+            type: 'default',
             transform: {
                 x: 250,
                 y: 100,
@@ -25,16 +25,16 @@
                 width: 150,
             },
             data: {
-                label: "Node 1",
+                label: 'Node 1',
             },
         },
     ];
     let edges = [
         {
-            id: "1",
-            type: "default",
-            source: "1",
-            target: "2",
+            id: '1',
+            type: 'default',
+            source: '1',
+            target: '2',
         },
     ];
 

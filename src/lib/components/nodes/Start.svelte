@@ -1,15 +1,22 @@
 <script lang="ts">
-    import { pan } from "../../actions";
-    export let node: any;
+    export let id: string;
+    export let type: string;
+    export let transform: {
+        x: number;
+        y: number;
+        height: number;
+        width: number;
+    };
+    export let data: any;
+    export let updateData: (id: string, data: any) => void;
 </script>
 
-<div id={node.id} class="node" use:pan={{ ...node, scale: $$props.scale }}>
-    I am a default node
+<div class="node">
+    I am start node {id}
 </div>
 
 <style>
     .node {
-        position: absolute;
         background-color: #fff;
         border: 1px solid #000;
         border-radius: 5px;
