@@ -1,53 +1,51 @@
 <script lang="ts">
-    import { writable } from "svelte/store";
-    import { v4 as uuid4 } from "uuid";
-    import { FlowNinja } from "$lib";
+    import { FlowNinja, createStore } from "$lib";
 
-    let elm: HTMLElement;
-
-    const tmpId = uuid4();
-    let flowStore = {
-        id: writable(tmpId),
-        name: writable(`Flow-${tmpId}`),
-        scale: writable(1),
-        step: writable(0.1),
-        scaleExtents: writable({
-            min: 0.5,
-            max: 1.5,
-        }),
-        nodes: writable([
-            {
-                type: "default",
-                x: 3000,
-                y: 1000,
-                height: "50px",
-                width: "100px",
+    let nodes = [
+        {
+            id: "1",
+            type: "default",
+            transform: {
+                x: 100,
+                y: 100,
+                height: 100,
+                width: 100,
             },
-        ]),
-        edges: writable([]),
-    };
-    const { scale, step, scaleExtents } = flowStore;
+            data: {
+                label: "Node 1",
+            },
+        },
+        {
+            id: "2",
+            type: "default",
+            transform: {
+                x: 250,
+                y: 100,
+                height: 30,
+                width: 150,
+            },
+            data: {
+                label: "Node 1",
+            },
+        },
+    ];
+    let edges = [
+        {
+            id: "1",
+            type: "default",
+            source: "1",
+            target: "2",
+        },
+    ];
 
-    function zoomIn() {
-        scale.update((currentScale) =>
-            Math.min($scaleExtents.max, currentScale + $step),
-        );
-    }
-
-    function zoomOut() {
-        scale.update((currentScale) =>
-            Math.max($scaleExtents.min, currentScale - $step),
-        );
-    }
+    const { key, store } = createStore({
+        nodes,
+        edges,
+    });
 </script>
 
-<div class="test" bind:this={elm}>
-    <FlowNinja {flowStore} />
-    <div class="controls">
-        <button on:click={zoomIn}>Zoom In</button>
-        <button on:click={zoomOut}>Zoom Out</button>
-        <span>{Math.round($scale * 100)}%</span>
-    </div>
+<div class="test">
+    <FlowNinja {key} {store} />
 </div>
 
 <style>

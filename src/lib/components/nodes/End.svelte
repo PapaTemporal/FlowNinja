@@ -1,13 +1,9 @@
 <script lang="ts">
+    import { pan } from "../../actions";
     export let node: any;
-
-    const { x, y, height, width } = node;
 </script>
 
-<div
-    class="node"
-    style={`height: ${height}; width: ${width}; top: ${y}px; left: ${x}px;`}
->
+<div id={node.id} class="node" use:pan={{ ...node, scale: $$props.scale }}>
     I am a default node
 </div>
 

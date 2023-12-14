@@ -1,35 +1,49 @@
-import type { Writable } from "svelte/store";
+import type { Writable, Readable } from "svelte/store";
 
-export interface ScaleExtents {
-    min: number;
-    max: number;
+export interface SettingsType {
+    theme: Writable<string>;
 }
 
-export interface Node {
+export interface ViewportType {
+    x: Writable<number>;
+    y: Writable<number>;
+    width: Writable<number>;
+    height: Writable<number>;
+    scale: Writable<number>;
+}
+
+export interface NodeType {
     id: string;
     type: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    label: string;
+    transform: {
+        x: number;
+        y: number;
+        height: number;
+        width: number;
+    },
+    data: any;
 }
 
-export interface Edge {
+export interface EdgeType {
     id: string;
+    data: any;
     source: string;
     target: string;
-    label: string;
 }
 
-export interface FlowStore {
-    id: Writable<string>;
-    name: Writable<string>;
-    scale: Writable<number>;
-    step: Writable<number>;
-    scaleExtents: ScaleExtents;
-    nodes: Writable<Node[]>;
-    edges: Writable<Edge[]>;
-    nodeTypes?: { [key: string]: any };
-    [key: string]: any;
+export interface UserStoreType {
+    settings?: SettingsType;
+    viewport?: ViewportType;
+    nodes?: NodeType[];
+    edges?: EdgeType[];
+}
+
+export interface StoreType {
+    settingsStore: Writable<SettingsType>;
+    viewportStore: Writable<ViewportType>;
+    nodesStore: Writable<NodeType[]>;
+    edgesStore: Writable<EdgeType[]>;
+    selectedNodes: Writable<string[]>;
+    historyStore: Writable<any[]>;
+    scaleStore: Readable<number>;
 }
