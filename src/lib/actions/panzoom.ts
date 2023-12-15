@@ -1,103 +1,48 @@
+import type { ViewportType } from '$lib/types/store.ts';
 import type { Writable } from 'svelte/store';
 
 export function panzoom(
     node: HTMLElement,
-    {
-        x,
-        y,
-        height,
-        width,
-        scale,
-        scaleExtents,
-    }: {
-        x: Writable<number>,
-        y: Writable<number>,
-        height: Writable<number>,
-        width: Writable<number>,
-        scale: Writable<number>,
-        scaleExtents: Writable<number[]>
-    },
+    viewport: Writable<ViewportType>,
 ) {
     let lastX: number
     let lastY: number;
     let dragging = false;
-    let localScale: number;
-    let translateX: number;
-    let translateY: number;
-    let localScaleExtents: number[];
-    let localHeight: number;
-    let localWidth: number;
-    let pWidth: number;
-    let pHeight: number;
     let translateExtents: {
         min: [number, number];
         max: [number, number];
     };
-    let viewportElement = node.parentElement;
-    if (viewportElement) {
-        const bbox = viewportElement.getBoundingClientRect();
-        pWidth = bbox.width;
-        pHeight = bbox.height;
-    }
-    node.style.transformOrigin = 'top left';
 
-    const unsubscribeHeight = height.subscribe(value => {
-        localHeight = value;
+    let width: number;
+    let height: number;
 
-        if (!localHeight || localHeight < pHeight) {
-            localHeight = pHeight * 4;
+    const { width: pWidth, height: pHeight } = node.parentElement?.getBoundingClientRect() as DOMRect;
+
+    const unsubscribe = viewport.subscribe(value => {
+        width = value.width;
+        height = value.height;
+
+        if (!width || width < pWidth) {
+            width = pWidth * 4;
+        }
+        if (!height || height < pHeight) {
+            height = pHeight * 4;
+        }
+        if (!translateExtents) {
+            translateExtents = {
+                min: [-width + pWidth, -height + pHeight],
+                max: [0, 0],
+            };
         }
 
-        node.style.height = `${localHeight}px`;
-    });
-
-    const unsubscribeWidth = width.subscribe(value => {
-        localWidth = value;
-
-        if (!localWidth || localWidth < pWidth) {
-            localWidth = pWidth * 4;
-        }
-
-        node.style.width = `${localWidth}px`;
-    });
-
-    const unsubscribeScale = scale.subscribe(value => {
-        localScale = value;
-    });
-
-    const unsubscribeX = x.subscribe(value => {
-        translateX = value;
-
-        if (!translateX) {
-            translateX = -localWidth / 2 + pWidth / 2 / localScale;
-        }
-
-        translateExtents = {
-            min: [-localWidth + pWidth, -localHeight + pHeight],
-            max: [0, 0],
-        };
-    });
-
-    const unsubscribeY = y.subscribe(value => {
-        translateY = value;
-
-        if (!translateY) {
-            translateY = -localHeight / 2 + pHeight / 2 / localScale;
-        }
-
-        translateExtents = {
-            min: [-localWidth + pWidth, -localHeight + pHeight],
-            max: [0, 0],
-        };
-    });
-
-    const unsubscribeScaleExtents = scaleExtents.subscribe(value => {
-        localScaleExtents = value;
+        node.style.scale = `${value.scale}`;
+        node.style.translate = `${value.x}px ${value.y}px`;
+        node.style.height = `${height}px`;
+        node.style.width = `${width}px`;
+        node.style.transformOrigin = 'top left';
     });
 
     function handleMousedown(event: MouseEvent) {
-        event.preventDefault();
-
         document.addEventListener('mousemove', handleMousemove);
         document.addEventListener('mouseup', handleMouseup);
 
@@ -107,36 +52,24 @@ export function panzoom(
     }
 
     function handleMousemove(event: MouseEvent) {
-        event.preventDefault();
-
         if (dragging) {
-            let newTranslateX = translateX + (event.clientX - lastX) / localScale;
-            let newTranslateY = translateY + (event.clientY - lastY) / localScale;
+            viewport.update(value => {
+                let newTranslateX = value.x + (event.clientX - lastX);
+                let newTranslateY = value.y + (event.clientY - lastY);
 
-            // Clamp translation to the translateExtents
-            newTranslateX = Math.max(
-                Math.min(newTranslateX, translateExtents.max[0]),
-                translateExtents.min[0]
-            );
-            newTranslateY = Math.max(
-                Math.min(newTranslateY, translateExtents.max[1]),
-                translateExtents.min[1]
-            );
+                lastX = event.clientX;
+                lastY = event.clientY;
 
-            translateX = newTranslateX;
-            translateY = newTranslateY;
-
-            lastX = event.clientX;
-            lastY = event.clientY;
-
-            node.style.transform = `scale(${localScale}) translate(${translateX}px, ${translateY}px);`
-
+                return {
+                    ...value,
+                    x: Math.max(Math.min(newTranslateX, translateExtents.max[0]), translateExtents.min[0]),
+                    y: Math.max(Math.min(newTranslateY, translateExtents.max[1]), translateExtents.min[1])
+                };
+            });
         }
     }
 
-    function handleMouseup(event: MouseEvent) {
-        event.preventDefault();
-
+    function handleMouseup() {
         document.removeEventListener('mousemove', handleMousemove);
         document.removeEventListener('mouseup', handleMouseup);
 
@@ -149,30 +82,21 @@ export function panzoom(
     }) {
         event.preventDefault();
 
-        localScale = Math.max(
-            localScaleExtents[0],
-            Math.min(
-                localScaleExtents[1],
-                localScale * (event.deltaY > 0 ? 1.1 : 0.9)
-            )
-        )
+        viewport.update(value => {
+            const localScale = Math.max(value.scaleExtents[0], Math.min(value.scaleExtents[1], value.scale * (event.deltaY > 0 ? 1.1 : 0.9)));
 
-        translateExtents = {
-            min: [-localWidth + pWidth / localScale, -localHeight + pHeight / localScale],
-            max: [0, 0],
-        };
+            translateExtents = {
+                min: [(-width + pWidth / localScale) / 2, (-height + pHeight / localScale) / 2],
+                max: [0, 0],
+            };
 
-        translateX = Math.max(
-            Math.min(translateX, translateExtents.max[0]),
-            translateExtents.min[0]
-        )
-
-        translateY = Math.max(
-            Math.min(translateY, translateExtents.max[1]),
-            translateExtents.min[1]
-        )
-
-        node.style.transform = `scale(${localScale}) translate(${translateX}px, ${translateY}px);`
+            return {
+                ...value,
+                scale: localScale,
+                x: Math.max(Math.min(value.x, translateExtents.max[0]), translateExtents.min[0]),
+                y: Math.max(Math.min(value.y, translateExtents.max[1]), translateExtents.min[1]),
+            };
+        });
     }
 
     node.addEventListener('mousedown', handleMousedown);
@@ -180,12 +104,7 @@ export function panzoom(
 
     return {
         destroy() {
-            unsubscribeScale();
-            unsubscribeScaleExtents();
-            unsubscribeX();
-            unsubscribeY();
-            unsubscribeHeight();
-            unsubscribeWidth();
+            unsubscribe();
             node.removeEventListener('mousedown', handleMousedown);
             document.removeEventListener('mousemove', handleMousemove);
             document.removeEventListener('mouseup', handleMouseup);

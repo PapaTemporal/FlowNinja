@@ -10,7 +10,7 @@ export function pan(
     }: {
         id: string;
         transform: { x: number; y: number; height: number; width: number };
-        scale: Writable<number>;
+        scale: number;
         updatePosition: (id: string, x: number, y: number) => void;
     }
 ) {
@@ -22,11 +22,6 @@ export function pan(
     node.style.transform = `translate(${x}px, ${y}px)`;
     node.style.height = `${transform.height}px`;
     node.style.width = `${transform.width}px`;
-    let localScale: number;
-
-    const unsubscribe = scale.subscribe(value => {
-        localScale = value;
-    });
 
     function handleMousedown(event: MouseEvent) {
         event.stopPropagation();
@@ -43,8 +38,8 @@ export function pan(
         event.stopPropagation();
 
         if (isPanning) {
-            x = x + (event.clientX - lastX) / localScale;
-            y = y + (event.clientY - lastY) / localScale;
+            x = x + (event.clientX - lastX) / scale;
+            y = y + (event.clientY - lastY) / scale;
 
             lastX = event.clientX;
             lastY = event.clientY;
@@ -67,7 +62,6 @@ export function pan(
 
     return {
         destroy() {
-            unsubscribe();
             node.removeEventListener('mousedown', handleMousedown);
             document.removeEventListener('mousemove', handleMousemove);
             document.removeEventListener('mouseup', handleMouseup);

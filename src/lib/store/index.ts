@@ -17,8 +17,8 @@ const settingsDefaults: SettingsType = {
 };
 
 const viewportDefaults: ViewportType = {
-    x: undefined,
-    y: undefined,
+    x: 0,
+    y: 0,
     width: undefined,
     height: undefined,
     scale: 1,
@@ -39,16 +39,14 @@ export const createStore = ({
     };
 
     // Viewport store (public)
-    const viewportStore: ViewportType = {
-        x: writable(viewport?.x ?? viewportDefaults.x),
-        y: writable(viewport?.y ?? viewportDefaults.y),
-        width: writable(viewport?.width ?? viewportDefaults.width),
-        height: writable(viewport?.height ?? viewportDefaults.height),
-        scale: writable(viewport?.scale ?? viewportDefaults.scale),
-        scaleExtents: writable(
-            viewport?.scaleExtents ?? viewportDefaults.scaleExtents
-        ),
-    };
+    const viewportStore: Writable<ViewportType> = writable({
+        x: viewport?.x ?? viewportDefaults.x,
+        y: viewport?.y ?? viewportDefaults.y,
+        width: viewport?.width ?? viewportDefaults.width,
+        height: viewport?.height ?? viewportDefaults.height,
+        scale: viewport?.scale ?? viewportDefaults.scale,
+        scaleExtents: viewport?.scaleExtents ?? viewportDefaults.scaleExtents,
+    });
 
     // Flow store (array of nodes and edges - public)
     const nodesStore: Writable<NodeType[]> = writable(nodes || []);

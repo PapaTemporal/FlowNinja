@@ -10,12 +10,10 @@
 
     const { viewportStore, nodesStore, edgesStore } = store;
 
-    let { scale } = viewportStore;
-
     setContext('key', key);
     setContext('nodesStore', nodesStore);
     setContext('edgesStore', edgesStore);
-    setContext('scale', scale);
+    setContext('viewportStore', viewportStore);
 </script>
 
 <div class="viewport">

@@ -5,12 +5,12 @@ export interface SettingsType {
 }
 
 export interface ViewportType {
-    x: Writable<number>;
-    y: Writable<number>;
-    width: Writable<number>;
-    height: Writable<number>;
-    scale: Writable<number>;
-    scaleExtents: Writable<number[]>;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    scale: number;
+    scaleExtents: number[];
 }
 
 export interface NodeType {
@@ -44,7 +44,7 @@ export interface UserStoreType {
 
 export interface StoreType {
     settingsStore: SettingsType;
-    viewportStore: ViewportType;
+    viewportStore: Writable<ViewportType>;
     nodesStore: Writable<NodeType[]>;
     edgesStore: Writable<EdgeType[]>;
     selectedNodes: Writable<string[]>;

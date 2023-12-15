@@ -2,11 +2,12 @@
     import { getContext } from 'svelte';
     import type { Writable } from 'svelte/store';
     import { pan } from '$lib/actions';
-    import type { NodeType } from '$lib/types';
+    import type { NodeType, ViewportType } from '$lib/types';
     import { nodeTypes } from '$lib/components/nodes';
 
     let nodes: Writable<NodeType[]> = getContext('nodesStore');
-    let scale: Writable<number> = getContext('scale');
+    let viewport: Writable<ViewportType> = getContext('viewportStore');
+    let { scale } = $viewport;
 
     function updateData(id: string, data: any) {
         nodes.update((nodes: NodeType[]) => {
