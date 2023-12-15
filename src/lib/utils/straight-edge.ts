@@ -1,4 +1,4 @@
-import { getEdgeCenter } from './general';
+import { getEdgeCenter } from './general.js';
 
 export type GetStraightPathParams = {
     sourceX: number;
@@ -13,12 +13,12 @@ export function getStraightPath({
     targetX,
     targetY,
 }: GetStraightPathParams): [
-    path: string,
-    labelX: number,
-    labelY: number,
-    offsetX: number,
-    offsetY: number,
-] {
+        path: string,
+        labelX: number,
+        labelY: number,
+        offsetX: number,
+        offsetY: number,
+    ] {
     const [labelX, labelY, offsetX, offsetY] = getEdgeCenter({
         sourceX,
         sourceY,

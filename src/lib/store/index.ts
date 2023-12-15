@@ -1,4 +1,4 @@
-import { writable, type Writable, derived } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
 import type {
     SettingsType,
@@ -7,7 +7,7 @@ import type {
     EdgeType,
     UserStoreType,
     StoreType,
-} from './types';
+} from '$lib/types/index.js';
 import type { CurrentEdgeType } from '$lib/types/components.js';
 
 let stores: { [key: string]: StoreType } = {};
@@ -34,9 +34,9 @@ export const createStore = ({
     const key = uuidv4();
 
     // Global settings store (public)
-    const settingsStore: SettingsType = {
-        theme: writable(settings?.theme ?? settingsDefaults.theme),
-    };
+    const settingsStore: Writable<SettingsType> = writable({
+        theme: settings?.theme ?? settingsDefaults.theme,
+    });
 
     // Viewport store (public)
     const viewportStore: Writable<ViewportType> = writable({
@@ -62,9 +62,6 @@ export const createStore = ({
 
     // Create a writable store to hold the current edge
     const currentEdge: Writable<CurrentEdgeType | null> = writable(null);
-
-    nodesStore.set(nodes);
-    edgesStore.set(edges);
 
     stores[key] = {
         settingsStore,

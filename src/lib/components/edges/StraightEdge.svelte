@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { getStraightPath } from '$lib/utils';
-    import type { EdgeType, NodeType } from '$lib/types';
+    import { getStraightPath } from '$lib/utils/index.js';
+    import type { EdgeType, NodeType } from '$lib/types/index.js';
     import { getContext } from 'svelte';
     import type { Writable } from 'svelte/store';
 
@@ -16,8 +16,8 @@
     let targetY: number;
 
     $: {
-        sourceNode = $nodes.find(node => node.id === edge.source);
-        targetNode = $nodes.find(node => node.id === edge.target);
+        sourceNode = $nodes.find(node => node.id === edge.source) as NodeType;
+        targetNode = $nodes.find(node => node.id === edge.target) as NodeType;
 
         if (sourceNode) {
             sourceX = sourceNode.transform.x + sourceNode.transform.width / 2;

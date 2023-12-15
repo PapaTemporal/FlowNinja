@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { Dot } from '$lib/components/ports';
-    import { Direction } from '$lib/types';
+    import { Dot } from '$lib/components/ports/index.js';
+    import { Direction } from '$lib/types/index.js';
 
     export let id: string;
     export let type: string;

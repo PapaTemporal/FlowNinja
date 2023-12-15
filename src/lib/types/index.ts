@@ -1,2 +1,2 @@
-export * from './store';
-export * from './components';
+export * from './store.js';
+export * from './components.js';

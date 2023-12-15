@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { FlowNinja, createStore } from '$lib';
+    import { FlowNinja, createStore } from '$lib/index.js';
 
     let nodes = [
         {

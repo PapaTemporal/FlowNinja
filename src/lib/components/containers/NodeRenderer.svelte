@@ -1,13 +1,12 @@
 <script lang="ts">
     import { getContext } from 'svelte';
     import type { Writable } from 'svelte/store';
-    import { pan } from '$lib/actions';
-    import type { NodeType, ViewportType } from '$lib/types';
-    import { nodeTypes } from '$lib/components/nodes';
+    import { pan } from '$lib/actions/index.js';
+    import type { NodeType, ViewportType } from '$lib/types/index.js';
+    import { nodeTypes } from '$lib/components/nodes/index.js';
 
     let nodes: Writable<NodeType[]> = getContext('nodesStore');
     let viewport: Writable<ViewportType> = getContext('viewportStore');
-    let { scale } = $viewport;
 
     function updateData(id: string, data: any) {
         nodes.update((nodes: NodeType[]) => {
@@ -37,7 +36,7 @@
         class="flow-ninja__node"
         use:pan={{
             ...node,
-            scale,
+            viewport,
             updatePosition,
         }}
     >

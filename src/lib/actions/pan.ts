@@ -1,3 +1,4 @@
+import type { ViewportType } from '$lib/types/store.js';
 import type { Writable } from 'svelte/store';
 
 export function pan(
@@ -5,12 +6,12 @@ export function pan(
     {
         id,
         transform,
-        scale,
+        viewport,
         updatePosition,
     }: {
         id: string;
         transform: { x: number; y: number; height: number; width: number };
-        scale: number;
+        viewport: Writable<ViewportType>;
         updatePosition: (id: string, x: number, y: number) => void;
     }
 ) {
@@ -19,9 +20,14 @@ export function pan(
     let lastX = 0;
     let lastY = 0;
     let isPanning = false;
+    let scale = 1;
     node.style.transform = `translate(${x}px, ${y}px)`;
     node.style.height = `${transform.height}px`;
     node.style.width = `${transform.width}px`;
+
+    const unsubscibe = viewport.subscribe((value) => {
+        scale = value.scale;
+    });
 
     function handleMousedown(event: MouseEvent) {
         event.stopPropagation();
@@ -62,6 +68,7 @@ export function pan(
 
     return {
         destroy() {
+            unsubscibe();
             node.removeEventListener('mousedown', handleMousedown);
             document.removeEventListener('mousemove', handleMousemove);
             document.removeEventListener('mouseup', handleMouseup);

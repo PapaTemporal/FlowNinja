@@ -1,8 +1,8 @@
 <script lang="ts">
     import { getContext } from 'svelte';
     import type { Writable } from 'svelte/store';
-    import type { EdgeType } from '$lib/types';
-    import { edgeTypes } from '$lib/components/edges';
+    import type { EdgeType } from '$lib/types/index.js';
+    import { edgeTypes } from '$lib/components/edges/index.js';
 
     let edges: Writable<EdgeType[]> = getContext('edgesStore');
     // for future use
@@ -10,8 +10,11 @@
 </script>
 
 {#each $edges as edge}
-    {#if edgeTypes[edge.type]}
-        <svelte:component this={edgeTypes[edge.type]} {edge} />
+    {#if edgeTypes[edge.type as keyof typeof edgeTypes]}
+        <svelte:component
+            this={edgeTypes[edge.type as keyof typeof edgeTypes]}
+            {edge}
+        />
     {:else}
         <svelte:component this={edgeTypes.default} {edge} />
     {/if}

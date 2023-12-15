@@ -1,3 +1,3 @@
-export * from './pan';
-export * from './port';
-export * from './panzoom';
+export * from './pan.js';
+export * from './port.js';
+export * from './panzoom.js';

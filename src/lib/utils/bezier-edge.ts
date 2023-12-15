@@ -1,4 +1,4 @@
-import { Direction } from '$lib/types';
+import { Direction } from '$lib/types/index.js';
 
 export type GetBezierPathParams = {
     sourceX: number;
@@ -93,12 +93,12 @@ export function getBezierPath({
     targetDirection = Direction.Top,
     curvature = 0.25,
 }: GetBezierPathParams): [
-    path: string,
-    labelX: number,
-    labelY: number,
-    offsetX: number,
-    offsetY: number,
-] {
+        path: string,
+        labelX: number,
+        labelY: number,
+        offsetX: number,
+        offsetY: number,
+    ] {
     const [sourceControlX, sourceControlY] = getControlWithCurvature({
         pos: sourceDirection,
         x1: sourceX,

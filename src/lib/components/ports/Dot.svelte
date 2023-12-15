@@ -1,15 +1,18 @@
 <script lang="ts">
     import { getContext } from 'svelte';
     import { v4 as uuidv4 } from 'uuid';
-    import { Direction } from '$lib/types';
-    import { port } from '$lib/actions';
+    import { Direction, type CurrentEdgeType } from '$lib/types/index.js';
+    import { port } from '$lib/actions/index.js';
+    import type { Writable } from 'svelte/store';
 
     export let id = uuidv4();
     export let type = 'source';
     export let direction = Direction.Right;
     export let style = '';
 
-    let currentEdge = getContext('currentEdge');
+    let currentEdge = getContext(
+        'currentEdge'
+    ) as Writable<CurrentEdgeType | null>;
 </script>
 
 <div {style} class="connector" use:port={{ currentEdge }} />

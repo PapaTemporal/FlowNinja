@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onMount, setContext } from 'svelte';
-    import type { StoreType } from '$lib/types';
+    import type { StoreType } from '$lib/types/index.js';
     import NodeRenderer from './NodeRenderer.svelte';
     import EdgeRenderer from './EdgeRenderer.svelte';
-    import { panzoom } from '$lib/actions';
+    import { panzoom } from '$lib/actions/index.js';
 
     export let key: string;
     export let store: StoreType;

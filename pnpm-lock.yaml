@@ -7,6 +7,7 @@ specifiers:
   '@types/d3': ^7.4.3
   '@types/d3-selection': ^3.0.10
   '@types/d3-zoom': ^3.0.8
+  '@types/uuid': ^9.0.7
   d3-selection: ^3.0.0
   d3-zoom: ^3.0.0
   prettier: ^3.1.1
@@ -31,6 +32,7 @@ devDependencies:
   '@sveltejs/kit': 1.27.6_zkhokwvkrvvy26ugrk5zxpxkee
   '@sveltejs/package': 2.2.3_loghjyh6szmbyafokw7sgzi5ki
   '@types/d3': 7.4.3
+  '@types/uuid': 9.0.7
   prettier: 3.1.1
   prettier-plugin-svelte: 3.1.2_m3r7ihjdgrthic7xtgxnlnz3ni
   publint: 0.1.16
@@ -587,6 +589,10 @@ packages:
 
   /@types/pug/2.0.10:
     resolution: {integrity: sha512-Sk/uYFOBAB7mb74XcpizmH0KOR2Pv3D2Hmrh1Dmy5BmK3MpdSa5kqZcg6EKBdklU0bFXX9gCfzvpnyUehrPIuA==}
+    dev: true
+
+  /@types/uuid/9.0.7:
+    resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
     dev: true
 
   /acorn-typescript/1.4.11_acorn@8.11.2:

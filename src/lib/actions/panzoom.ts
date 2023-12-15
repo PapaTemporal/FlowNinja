@@ -1,4 +1,4 @@
-import type { ViewportType } from '$lib/types/store.ts';
+import type { ViewportType } from '$lib/types/index.js';
 import type { Writable } from 'svelte/store';
 
 export function panzoom(

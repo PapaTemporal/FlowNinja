@@ -1,6 +1,6 @@
 <script lang="ts">
     import { v4 as uuidv4 } from 'uuid';
-    import { Direction } from '$lib/types';
+    import { Direction } from '$lib/types/index.js';
 
     export let id = uuidv4();
     export let type = 'source';

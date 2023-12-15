@@ -1,5 +1,5 @@
-import { getEdgeCenter } from './general';
-import { Direction, type Position } from '$lib/types';
+import { getEdgeCenter } from './general.js';
+import { Direction, type Position } from '$lib/types/index.js';
 
 export interface GetSmoothStepPathParams {
     sourceX: number;
@@ -230,16 +230,14 @@ function getBend(a: Position, b: Position, c: Position, size: number): string {
     if (a.y === y) {
         const xDir = a.x < c.x ? -1 : 1;
         const yDir = a.y < c.y ? 1 : -1;
-        return `L ${x + bendSize * xDir},${y}Q ${x},${y} ${x},${
-            y + bendSize * yDir
-        }`;
+        return `L ${x + bendSize * xDir},${y}Q ${x},${y} ${x},${y + bendSize * yDir
+            }`;
     }
 
     const xDir = a.x < c.x ? 1 : -1;
     const yDir = a.y < c.y ? -1 : 1;
-    return `L ${x},${y + bendSize * yDir}Q ${x},${y} ${
-        x + bendSize * xDir
-    },${y}`;
+    return `L ${x},${y + bendSize * yDir}Q ${x},${y} ${x + bendSize * xDir
+        },${y}`;
 }
 
 export function getSmoothStepPath({
@@ -254,12 +252,12 @@ export function getSmoothStepPath({
     centerY,
     offset = 20,
 }: GetSmoothStepPathParams): [
-    path: string,
-    labelX: number,
-    labelY: number,
-    offsetX: number,
-    offsetY: number,
-] {
+        path: string,
+        labelX: number,
+        labelY: number,
+        offsetX: number,
+        offsetY: number,
+    ] {
     const [points, labelX, labelY, offsetX, offsetY] = getPoints({
         source: { x: sourceX, y: sourceY },
         sourceDirection,

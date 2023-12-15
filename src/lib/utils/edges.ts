@@ -1,6 +1,6 @@
-import type { NodeType } from '$lib/types';
+import type { NodeType } from '$lib/types/index.js';
 import type { EdgeType } from '$lib/types/store.js';
-import { getNodeCenterPosition } from './nodes';
+import { getNodeCenterPosition } from '$lib/utils/nodes.js';
 
 export function getEdgeSourceAndTargetNodePositions(
     edge: EdgeType,
