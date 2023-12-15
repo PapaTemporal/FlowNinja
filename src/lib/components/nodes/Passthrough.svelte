@@ -15,9 +15,18 @@
 </script>
 
 <div class="node row">
-    <Dot id={`${id}__a`} type="target" direction={Direction.Left} />
+    <Dot
+        id={`${id}__a`}
+        type="target"
+        direction={Direction.Left}
+        style="transform: translateX(-110%); flex: 0 0 12px;"
+    />
     I am default node {id}
-    <Dot id={`${id}__b`} />
+    <Dot
+        id={`${id}__b`}
+        direction={Direction.Right}
+        style="transform: translateX(110%); flex: 0 0 12px;"
+    />
 </div>
 
 <style>
