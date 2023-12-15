@@ -17,8 +17,8 @@ const settingsDefaults: SettingsType = {
 };
 
 const viewportDefaults: ViewportType = {
-    x: 0,
-    y: 0,
+    x: undefined,
+    y: undefined,
     width: undefined,
     height: undefined,
     scale: 1,

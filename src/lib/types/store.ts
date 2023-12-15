@@ -10,6 +10,7 @@ export interface ViewportType {
     width: Writable<number>;
     height: Writable<number>;
     scale: Writable<number>;
+    scaleExtents: Writable<number[]>;
 }
 
 export interface NodeType {
@@ -31,6 +32,7 @@ export interface EdgeType {
     sourceHandle?: string;
     target: string;
     targetHandle?: string;
+    style?: string;
 }
 
 export interface UserStoreType {
@@ -41,8 +43,8 @@ export interface UserStoreType {
 }
 
 export interface StoreType {
-    settingsStore: Writable<SettingsType>;
-    viewportStore: Writable<ViewportType>;
+    settingsStore: SettingsType;
+    viewportStore: ViewportType;
     nodesStore: Writable<NodeType[]>;
     edgesStore: Writable<EdgeType[]>;
     selectedNodes: Writable<string[]>;

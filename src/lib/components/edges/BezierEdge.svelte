@@ -1,22 +1,34 @@
 <script lang="ts">
-    import BaseEdge from './BaseEdge.svelte';
-    import {
-        getBezierPath,
-        getEdgeSourceAndTargetNodePositions,
-    } from '$lib/utils';
-    import { v4 as uuidv4 } from 'uuid';
+    import { getBezierPath } from '$lib/utils';
     import type { EdgeType, NodeType } from '$lib/types';
     import { getContext } from 'svelte';
     import type { Writable } from 'svelte/store';
 
-    export let id = uuidv4();
     export let edge: EdgeType;
-    export let style = '';
 
     const nodes: Writable<NodeType[]> = getContext('nodesStore');
 
-    let { sourceX, sourceY, targetX, targetY } =
-        getEdgeSourceAndTargetNodePositions(edge, $nodes);
+    let sourceNode: NodeType;
+    let targetNode: NodeType;
+    let sourceX: number;
+    let sourceY: number;
+    let targetX: number;
+    let targetY: number;
+
+    $: {
+        sourceNode = $nodes.find(node => node.id === edge.source);
+        targetNode = $nodes.find(node => node.id === edge.target);
+
+        if (sourceNode) {
+            sourceX = sourceNode.transform.x + sourceNode.transform.width / 2;
+            sourceY = sourceNode.transform.y + sourceNode.transform.height / 2;
+        }
+
+        if (targetNode) {
+            targetX = targetNode.transform.x + targetNode.transform.width / 2;
+            targetY = targetNode.transform.y + targetNode.transform.height / 2;
+        }
+    }
 
     $: [path, labelX, labelY] = getBezierPath({
         sourceX,
@@ -28,10 +40,20 @@
     });
 </script>
 
-<BaseEdge
-    {id}
-    {path}
-    markerStart={edge.markerStart}
-    markerEnd={edge.markerEnd}
-    {style}
+<path
+    id={edge.id}
+    d={path}
+    marker-start={edge.markerStart}
+    marker-end={edge.markerEnd}
+    fill="none"
+    style={edge.style}
+    class="edge"
 />
+
+<style>
+    .edge {
+        stroke: #b1b1b7;
+        stroke-width: 2;
+        fill: none;
+    }
+</style>

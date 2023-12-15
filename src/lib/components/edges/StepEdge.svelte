@@ -1,28 +1,60 @@
 <script lang="ts">
-    import BaseEdge from './BaseEdge.svelte';
     import { getSmoothStepPath } from '$lib/utils';
-    import { v4 as uuidv4 } from 'uuid';
+    import type { EdgeType, NodeType } from '$lib/types';
+    import { getContext } from 'svelte';
+    import type { Writable } from 'svelte/store';
 
-    export let id = uuidv4();
-    export let sourceX: number;
-    export let sourceY: number;
-    export let targetX: number;
-    export let targetY: number;
-    export let sourceDirection: number;
-    export let targetDirection: number;
-    export let markerStart: string;
-    export let markerEnd: string;
-    export let style: string;
+    export let edge: EdgeType;
+
+    const nodes: Writable<NodeType[]> = getContext('nodesStore');
+
+    let sourceNode: NodeType;
+    let targetNode: NodeType;
+    let sourceX: number;
+    let sourceY: number;
+    let targetX: number;
+    let targetY: number;
+
+    $: {
+        sourceNode = $nodes.find(node => node.id === edge.source);
+        targetNode = $nodes.find(node => node.id === edge.target);
+
+        if (sourceNode) {
+            sourceX = sourceNode.transform.x + sourceNode.transform.width / 2;
+            sourceY = sourceNode.transform.y + sourceNode.transform.height / 2;
+        }
+
+        if (targetNode) {
+            targetX = targetNode.transform.x + targetNode.transform.width / 2;
+            targetY = targetNode.transform.y + targetNode.transform.height / 2;
+        }
+    }
 
     $: [path, labelX, labelY] = getSmoothStepPath({
         sourceX: sourceX,
         sourceY: sourceY,
         targetX: targetX,
         targetY: targetY,
-        sourceDirection: sourceDirection,
-        targetDirection: targetDirection,
+        sourceDirection: edge.sourceDirection,
+        targetDirection: edge.targetDirection,
         borderRadius: 0,
     });
 </script>
 
-<BaseEdge {id} {path} {markerStart} {markerEnd} {style} />
+<path
+    id={edge.id}
+    d={path}
+    marker-start={edge.markerStart}
+    marker-end={edge.markerEnd}
+    fill="none"
+    style={edge.style}
+    class="edge"
+/>
+
+<style>
+    .edge {
+        stroke: #b1b1b7;
+        stroke-width: 2;
+        fill: none;
+    }
+</style>

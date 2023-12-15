@@ -22,8 +22,8 @@
         nodes.update((nodes: NodeType[]) => {
             let node = nodes.find(node => node.id === id);
             if (node) {
-                node.x = x;
-                node.y = y;
+                node.transform.x = x;
+                node.transform.y = y;
             }
             return nodes;
         });
