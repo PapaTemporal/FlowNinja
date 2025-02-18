@@ -1,0 +1,179 @@
+<!-- MonacoExchangeFilter.svelte -->
+<script>
+import { onMount } from 'svelte';
+import * as monaco from 'monaco-editor';
+
+// ExchangeLib filter schema
+const exchangelibSchema = {
+  fields: {
+    subject: {
+      type: 'string',
+      operators: ['eq', 'ne', 'contains', 'startswith', 'endswith'],
+      description: 'Email subject line'
+    },
+    datetime_received: {
+      type: 'datetime',
+      operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'range'],
+      description: 'When email was received'
+    },
+    datetime_sent: {
+      type: 'datetime',
+      operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'range'],
+      description: 'When email was sent'
+    },
+    sender: {
+      type: 'email',
+      operators: ['eq', 'ne', 'contains'],
+      description: 'Email sender address'
+    },
+    importance: {
+      type: 'enum',
+      values: ['Low', 'Normal', 'High'],
+      operators: ['eq', 'ne'],
+      description: 'Email importance level'
+    },
+    is_read: {
+      type: 'boolean',
+      operators: ['eq'],
+      description: 'Whether email has been read'
+    },
+    has_attachments: {
+      type: 'boolean',
+      operators: ['eq'],
+      description: 'Whether email has attachments'
+    },
+    categories: {
+      type: 'array',
+      operators: ['contains'],
+      description: 'Email categories'
+    },
+    size: {
+      type: 'number',
+      operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte'],
+      description: 'Email size in bytes'
+    },
+    body: {
+      type: 'string',
+      operators: ['contains'],
+      description: 'Email body content'
+    }
+  }
+};
+
+let editor;
+let editorContainer;
+
+// Generate suggestions based on current text and cursor position
+function provideSuggestions(model, position) {
+  const textUntilPosition = model.getValueInRange({
+    startLineNumber: 1,
+    startColumn: 1,
+    endLineNumber: position.lineNumber,
+    endColumn: position.column
+  });
+
+  const suggestions = [];
+  const currentWord = model.getWordUntilPosition(position);
+  
+  // If starting a new filter
+  if (textUntilPosition.trim() === '' || textUntilPosition.endsWith('&') || textUntilPosition.endsWith('|')) {
+    // Suggest fields
+    Object.entries(exchangelibSchema.fields).forEach(([field, info]) => {
+      suggestions.push({
+        label: field,
+        kind: monaco.languages.CompletionItemKind.Field,
+        detail: info.type,
+        documentation: info.description,
+        insertText: field
+      });
+    });
+  }
+  // If after a field but before an operator
+  else if (Object.keys(exchangelibSchema.fields).some(field => 
+    textUntilPosition.trim().endsWith(field))) {
+    // Get the current field
+    const field = Object.keys(exchangelibSchema.fields).find(f => 
+      textUntilPosition.trim().endsWith(f));
+    const fieldInfo = exchangelibSchema.fields[field];
+    
+    // Suggest operators
+    fieldInfo.operators.forEach(op => {
+      suggestions.push({
+        label: `__${op}`,
+        kind: monaco.languages.CompletionItemKind.Operator,
+        insertText: `__${op}=`,
+        documentation: `${op} operator for ${field}`
+      });
+    });
+  }
+
+  return {
+    suggestions
+  };
+}
+
+onMount(() => {
+  // Register a new language
+  monaco.languages.register({ id: 'exchangelib' });
+
+  // Register completions provider
+  monaco.languages.registerCompletionItemProvider('exchangelib', {
+    provideCompletionItems: provideSuggestions
+  });
+
+  // Create editor
+  editor = monaco.editor.create(editorContainer, {
+    value: '# Example: subject__contains="important" & is_read=False\n',
+    language: 'exchangelib',
+    theme: 'vs-dark',
+    minimap: { enabled: false },
+    lineNumbers: 'on',
+    scrollBeyondLastLine: false,
+    automaticLayout: true
+  });
+
+  // Add some basic syntax highlighting
+  monaco.languages.setMonarchTokensProvider('exchangelib', {
+    tokenizer: {
+      root: [
+        [/[a-zA-Z_]\w*/, 'field'],
+        [/__[a-z]+/, 'operator'],
+        [/[=<>!]+/, 'comparison'],
+        [/["'].*?["']/, 'string'],
+        [/\d+/, 'number'],
+        [/[&|~]/, 'logical'],
+        [/#.*$/, 'comment'],
+      ]
+    }
+  });
+
+  return () => {
+    editor.dispose();
+  };
+});
+
+// Export the editor value for parent components
+export function getValue() {
+  return editor ? editor.getValue() : '';
+}
+
+// Allow parent to set the value
+export function setValue(value) {
+  if (editor) {
+    editor.setValue(value);
+  }
+}
+</script>
+
+<style>
+.editor-container {
+  width: 100%;
+  height: 300px;
+  border: 1px solid #ccc;
+}
+</style>
+
+<div class="editor-container" bind:this={editorContainer}></div>
+Share Svelte Monaco Editor with ExchangeLib Filtering
+
+Sent from my iPhone
